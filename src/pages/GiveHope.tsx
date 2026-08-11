@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { useTranslation } from "react-i18next";
@@ -31,79 +31,37 @@ type UserRecord = {
   email?: string;
 };
 
-type PaymentMethodId = "bank" | "telebirr";
-
-// TODO: replace with the real account details before launch.
-const paymentMethods: {
-  id: PaymentMethodId;
-  label: string;
-  icon: string;
-  lines: { label: string; value: string }[];
-}[] = [
-  {
-    id: "bank",
-    label: "Bank Transfer",
-    icon: "account_balance",
-    lines: [
-      { label: "Bank", value: "Commercial Bank of Ethiopia" },
-      { label: "Account name", value: "Tenadam Charity Fund" },
-      { label: "Account number", value: "1000123456789" },
-    ],
-  },
-  {
-    id: "telebirr",
-    label: "Telebirr",
-    icon: "smartphone",
-    lines: [
-      { label: "Telebirr merchant", value: "Tenadam Charity Fund" },
-      { label: "Phone number", value: "0912 345 678" },
-    ],
-  },
-];
+type DonationStatus = "pending" | "paid" | "failed";
 
 const presetAmounts = [100, 250, 500, 1000, 2500];
 
-const methodLabelKeys: Record<string, string> = {
-  "Bank Transfer": "bankTransfer",
-  Telebirr: "telebirr",
-};
-
-const lineLabelKeys: Record<string, string> = {
-  Bank: "bank",
-  "Account name": "accountName",
-  "Account number": "accountNumber",
-  "Telebirr merchant": "telebirrMerchant",
-  "Phone number": "phoneNumber",
-};
-
 export default function GiveHope() {
   const { t } = useTranslation();
-  const methodLabel = (label: string) =>
-    t(`giveHope.methods.${methodLabelKeys[label] ?? "bankTransfer"}`);
-  const lineLabel = (label: string) =>
-    t(`giveHope.lineLabels.${lineLabelKeys[label] ?? "bank"}`);
   const formatEtb = (value: number) =>
     t("common.priceLabel", { price: value.toFixed(2) });
   const donationContext = useContext(DonationContext);
   const { causeId } = useParams();
+  const [searchParams] = useSearchParams();
+  const returningTxRef = searchParams.get("tx_ref");
+
   const [cause, setCause] = useState<DisplayCause | null>(null);
   const [causeLoading, setCauseLoading] = useState(true);
   const [causeError, setCauseError] = useState(false);
 
   const [amount, setAmount] = useState<number | null>(presetAmounts[1]);
   const [customAmount, setCustomAmount] = useState("");
-  const [methodId, setMethodId] = useState<PaymentMethodId>("bank");
   const [donorName, setDonorName] = useState("");
   const [donorPhone, setDonorPhone] = useState("");
   const [donorEmail, setDonorEmail] = useState("");
   const [note, setNote] = useState("");
-  const [reference, setReference] = useState("");
-  const [copiedLine, setCopiedLine] = useState("");
-  const [submittedAmount, setSubmittedAmount] = useState<number | null>(null);
+  const [redirecting, setRedirecting] = useState(false);
 
-  const selectedMethod =
-    paymentMethods.find((method) => method.id === methodId) ??
-    paymentMethods[0];
+  const [returnStatus, setReturnStatus] = useState<DonationStatus | null>(
+    null,
+  );
+  const [returnAmount, setReturnAmount] = useState<number | null>(null);
+  const [checkingReturn, setCheckingReturn] = useState(!!returningTxRef);
+
   const finalAmount = customAmount ? Number(customAmount) : amount;
 
   useEffect(() => {
@@ -168,17 +126,46 @@ export default function GiveHope() {
     loadCause();
   }, [causeId]);
 
-  const handleCopy = async (line: string) => {
-    try {
-      await navigator.clipboard.writeText(line);
-      setCopiedLine(line);
-      setTimeout(() => setCopiedLine(""), 1500);
-    } catch {
+  useEffect(() => {
+    if (!returningTxRef || !cause) return;
 
-    }
-  };
+    const checkStatus = async () => {
+      setCheckingReturn(true);
+      try {
+        const response = await fetch(
+          `http://127.0.0.1:8000/api/donations/verify/${returningTxRef}/`,
+        );
+        if (!response.ok) throw new Error("Failed to verify donation");
+        const data = await response.json();
+        setReturnStatus(data.status);
+        setReturnAmount(Number(data.amount));
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        if (data.status === "paid") {
+          donationContext?.addDonation({
+            amount: Number(data.amount),
+            paymentMethod: "chapa",
+            causeId: cause.id,
+            causeName: cause.name,
+            donorName: data.donor_name,
+            donorPhone: "",
+            donorEmail: "",
+            note: "",
+            reference: data.tx_ref,
+            status: "confirmed",
+          });
+        }
+      } catch {
+        setReturnStatus("failed");
+      } finally {
+        setCheckingReturn(false);
+      }
+    };
+
+    checkStatus();
+    
+  }, [returningTxRef, cause]);
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!cause) return;
@@ -188,32 +175,41 @@ export default function GiveHope() {
       return;
     }
 
-    if (!donorName.trim() || !donorPhone.trim()) {
+    if (!donorName.trim() || !donorPhone.trim() || !donorEmail.trim()) {
       alert(t("giveHope.alertMissingContact"));
       return;
     }
 
-    donationContext?.addDonation({
-      amount: finalAmount,
-      paymentMethod: methodId,
-      causeId: cause.id,
-      causeName: cause.name,
-      donorName,
-      donorPhone,
-      donorEmail,
-      note,
-      reference,
-    });
+    setRedirecting(true);
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:8000/api/donations/initialize/",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            cause: Number(cause.id),
+            donor_name: donorName,
+            donor_phone: donorPhone,
+            donor_email: donorEmail,
+            note,
+            amount: finalAmount,
+          }),
+        },
+      );
 
-    setSubmittedAmount(finalAmount);
-  };
+      const data = await response.json();
+      if (!response.ok || !data.checkout_url) {
+        alert(t("giveHope.initializeError"));
+        setRedirecting(false);
+        return;
+      }
 
-  const handleReset = () => {
-    setSubmittedAmount(null);
-    setAmount(presetAmounts[1]);
-    setCustomAmount("");
-    setNote("");
-    setReference("");
+      window.location.href = data.checkout_url;
+    } catch {
+      alert(t("giveHope.initializeError"));
+      setRedirecting(false);
+    }
   };
 
   if (causeLoading) {
@@ -233,39 +229,49 @@ export default function GiveHope() {
     );
   }
 
-  if (submittedAmount !== null) {
+  if (returningTxRef) {
+    if (checkingReturn) {
+      return (
+        <div className="appointment-page donation-page container content-with-nav">
+          <p>{t("giveHope.checkingPayment")}</p>
+        </div>
+      );
+    }
+
     return (
       <div className="appointment-page donation-page container content-with-nav">
         <div className="appointment-shell">
           <section className="booking-card hero-card success-card">
             <p className="eyebrow">{t("giveHope.thankYou")}</p>
-            <h1>{t("giveHope.confirmationTitle")}</h1>
-            <div className="confirmation-card">
-              <p className="muted-copy">
-                {t("giveHope.confirmationText", {
-                  amount: formatEtb(submittedAmount),
-                  cause: cause.name,
-                  method: methodLabel(selectedMethod.label),
-                })}
-              </p>
+            {returnStatus === "paid" ? (
+              <>
+                <h1>{t("giveHope.confirmationTitlePaid")}</h1>
+                <p className="muted-copy">
+                  {t("giveHope.confirmationTextPaid", {
+                    amount: formatEtb(returnAmount ?? 0),
+                    cause: cause.name,
+                  })}
+                </p>
+              </>
+            ) : returnStatus === "pending" ? (
+              <>
+                <h1>{t("giveHope.confirmationTitlePending")}</h1>
+                <p className="muted-copy">
+                  {t("giveHope.confirmationTextPending")}
+                </p>
+              </>
+            ) : (
+              <>
+                <h1>{t("giveHope.confirmationTitleFailed")}</h1>
+                <p className="muted-copy">
+                  {t("giveHope.confirmationTextFailed")}
+                </p>
+              </>
+            )}
 
-              <div className="method-card active">
-                <div className="method-card-header">
-                  <i className="material-icons">{selectedMethod.icon}</i>
-                  <strong>{methodLabel(selectedMethod.label)}</strong>
-                </div>
-                {selectedMethod.lines.map((line) => (
-                  <div className="payment-line" key={line.label}>
-                    <span>{lineLabel(line.label)}</span>
-                    <strong>{line.value}</strong>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <button className="cta-button" type="button" onClick={handleReset}>
+            <Link className="cta-button" to={`/give-hope/${cause.id}`}>
               {t("giveHope.makeAnother")}
-            </button>
+            </Link>
             <Link className="back-link" to="/give-hope">
               <i className="material-icons">arrow_back</i>{" "}
               {t("giveHope.backToCauses")}
@@ -368,60 +374,12 @@ export default function GiveHope() {
             </div>
           </section>
 
-          <section className="booking-card">
-            <div className="section-header">
-              <div>
-                <p className="eyebrow">{t("giveHope.step2")}</p>
-                <h2>{t("giveHope.howWillYouSend")}</h2>
-              </div>
-            </div>
-
-            <div className="method-grid">
-              {paymentMethods.map((method) => (
-                <button
-                  key={method.id}
-                  type="button"
-                  className={`method-card${method.id === methodId ? " active" : ""}`}
-                  onClick={() => setMethodId(method.id)}
-                >
-                  <div className="method-card-header">
-                    <i className="material-icons">{method.icon}</i>
-                    <strong>{methodLabel(method.label)}</strong>
-                  </div>
-                  {method.id === methodId &&
-                    method.lines.map((line) => (
-                      <div className="payment-line" key={line.label}>
-                        <span>{lineLabel(line.label)}</span>
-                        <strong
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            handleCopy(line.value);
-                          }}
-                        >
-                          {line.value}
-                          <i className="material-icons copy-icon">
-                            {copiedLine === line.value ? "check" : "content_copy"}
-                          </i>
-                        </strong>
-                      </div>
-                    ))}
-                </button>
-              ))}
-            </div>
-            <p className="muted-copy payment-hint">
-              {t("giveHope.paymentHint")}
-            </p>
-          </section>
-
           <section className="booking-card patient-card">
             <div className="section-header">
               <div>
-                <p className="eyebrow">{t("giveHope.step3")}</p>
+                <p className="eyebrow">{t("giveHope.step2")}</p>
                 <h2>{t("giveHope.whoIsThisFrom")}</h2>
               </div>
-              <span className="availability-chip">
-                {t("appointment.guestFriendly")}
-              </span>
             </div>
 
             <div className="patient-grid">
@@ -437,6 +395,7 @@ export default function GiveHope() {
                     onChange={(event) => setDonorName(event.target.value)}
                     placeholder={t("appointment.fullNamePlaceholder")}
                     autoComplete="name"
+                    required
                   />
                 </div>
               </div>
@@ -454,13 +413,14 @@ export default function GiveHope() {
                     placeholder="09xx xxx xxx"
                     autoComplete="tel"
                     type="tel"
+                    required
                   />
                 </div>
               </div>
 
               <div className="field-group">
                 <label className="field-label" htmlFor="donorEmail">
-                  {t("giveHope.emailOptional")}
+                  {t("giveHope.email")}
                 </label>
                 <div className="input-shell input-with-icon">
                   <i className="material-icons input-icon">mail</i>
@@ -471,21 +431,7 @@ export default function GiveHope() {
                     placeholder="you@example.com"
                     autoComplete="email"
                     type="email"
-                  />
-                </div>
-              </div>
-
-              <div className="field-group">
-                <label className="field-label" htmlFor="reference">
-                  {t("giveHope.referenceOptional")}
-                </label>
-                <div className="input-shell input-with-icon">
-                  <i className="material-icons input-icon">receipt_long</i>
-                  <input
-                    id="reference"
-                    value={reference}
-                    onChange={(event) => setReference(event.target.value)}
-                    placeholder={t("giveHope.referencePlaceholder")}
+                    required
                   />
                 </div>
               </div>
@@ -510,7 +456,7 @@ export default function GiveHope() {
           <section className="booking-card summary-card">
             <div className="section-header">
               <div>
-                <p className="eyebrow">{t("giveHope.step4")}</p>
+                <p className="eyebrow">{t("giveHope.step3")}</p>
                 <h2>{t("giveHope.confirmYourDonation")}</h2>
               </div>
             </div>
@@ -526,22 +472,30 @@ export default function GiveHope() {
                     : t("giveHope.chooseAmount")}
                 </strong>
               </div>
-              <div>
-                <span className="summary-label">{t("giveHope.method")}</span>
-                <strong>{methodLabel(selectedMethod.label)}</strong>
-              </div>
             </div>
 
             <div className="desktop-cta">
-              <button className="cta-button" type="submit">
-                {t("giveHope.confirmDonation")}
+              <button
+                className="cta-button"
+                type="submit"
+                disabled={redirecting}
+              >
+                {redirecting
+                  ? t("giveHope.redirecting")
+                  : t("giveHope.confirmDonation")}
               </button>
             </div>
           </section>
 
           <div className="mobile-cta" aria-hidden="true">
-            <button className="cta-button" type="submit">
-              {t("giveHope.confirmDonation")}
+            <button
+              className="cta-button"
+              type="submit"
+              disabled={redirecting}
+            >
+              {redirecting
+                ? t("giveHope.redirecting")
+                : t("giveHope.confirmDonation")}
             </button>
           </div>
         </form>

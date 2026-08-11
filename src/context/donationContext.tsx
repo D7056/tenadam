@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 export type DonationItem = {
   id: string;
   amount: number;
-  paymentMethod: "bank" | "telebirr";
+  paymentMethod: "bank" | "telebirr" | "chapa";
   causeId: string;
   causeName: string;
   donorName: string;
@@ -23,10 +23,17 @@ type ChildrenProp = {
 type DonationContextType = {
   donations: DonationItem[];
   counter: number;
-  addDonation: (donation: Omit<DonationItem, "id" | "createdAt" | "status">) => void;
+  addDonation: (
+
+    donation: Omit<DonationItem, "id" | "createdAt" | "status"> & {
+      status?: DonationItem["status"];
+    },
+  ) => void;
   removeDonation: (id: string) => void;
   clearDonations: () => void;
 };
+
+
 
 const STORAGE_KEY = "tenadam_donations_v1";
 
@@ -53,7 +60,9 @@ export function DonationContextProvider({ children }: ChildrenProp) {
   const counter = useMemo(() => donations.length, [donations]);
 
   const addDonation = (
-    donation: Omit<DonationItem, "id" | "createdAt" | "status">,
+    donation: Omit<DonationItem, "id" | "createdAt" | "status"> & {
+      status?: DonationItem["status"];
+    },
   ) => {
     const id = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
     const createdAt = new Date().toISOString();
@@ -63,7 +72,7 @@ export function DonationContextProvider({ children }: ChildrenProp) {
         ...donation,
         id,
         createdAt,
-        status: "pending",
+        status: donation.status ?? "pending",
       },
       ...prev,
     ]);
