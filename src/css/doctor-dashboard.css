@@ -1,0 +1,592 @@
+.doctor-dashboard-page {
+  width: 100%;
+  padding: 1.5rem 0 3rem;
+  background: #ffffff;
+}
+
+.doctor-dashboard-hero {
+  width: min(100%, 1100px);
+  margin: 0 auto;
+  padding: 0.5rem 1rem 1.5rem;
+  text-align: center;
+}
+
+
+
+.doctor-dashboard-eyebrow {
+  margin: 0 0 0.5rem;
+  color: #2f7d32;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.doctor-dashboard-hero h1 {
+  margin: 0 0 0.5rem;
+  color: #102014;
+  font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+}
+
+.doctor-dashboard-hero p {
+  margin: 0 auto;
+  max-width: 55ch;
+  color: #51625a;
+}
+
+.doctor-dashboard-availability-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 1.25rem;
+  padding: 0.65rem 1.4rem;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #1d5b22, #2f7d32);
+  color: #ffffff;
+  font-weight: 800;
+  text-decoration: none;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.doctor-dashboard-availability-btn:hover {
+  background: linear-gradient(135deg, #194d1d, #2e8d34);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.doctor-dashboard-availability-btn .material-icons {
+  font-size: 1.15rem;
+}
+
+.doctor-dashboard-stats {
+  width: min(100%, 1100px);
+  margin: 0 auto 1.5rem;
+  padding: 0 1rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.doctor-dashboard-stat-card {
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(47, 125, 50, 0.1);
+  border-radius: 20px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+  padding: 1rem;
+  display: grid;
+  gap: 0.2rem;
+}
+
+.doctor-dashboard-stat-value {
+  color: #1d5b22;
+  font-size: 2rem;
+  font-weight: 900;
+}
+
+.doctor-dashboard-stat-label {
+  color: #51625a;
+  font-weight: 600;
+}
+
+.doctor-dashboard-section {
+  width: min(100%, 1100px);
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.doctor-dashboard-section h2 {
+  margin: 0 0 1rem;
+  color: #102014;
+}
+
+.doctor-dashboard-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin-bottom: 1.25rem;
+}
+
+.doctor-dashboard-search-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.doctor-dashboard-search-wrapper input {
+  width: 100%;
+  padding: 0.85rem 1rem 0.85rem 2.75rem;
+  border-radius: 999px;
+  border: 1px solid rgba(47, 125, 50, 0.15);
+  background: #fbfdfb;
+  font-size: 0.95rem;
+  outline: none;
+  box-sizing: border-box;
+  color: black;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.doctor-dashboard-search-wrapper input:focus {
+  border-color: #2f7d32;
+  box-shadow: 0 0 0 4px rgba(47, 125, 50, 0.12);
+}
+
+.doctor-dashboard-search-icon {
+  position: absolute;
+  left: 0.9rem;
+  color: #6b7280;
+  font-size: 1.2rem;
+}
+
+.doctor-dashboard-filter-rail {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+  scrollbar-width: none;
+}
+
+.doctor-dashboard-filter-rail::-webkit-scrollbar {
+  display: none;
+}
+
+.doctor-dashboard-filter-pill {
+  white-space: nowrap;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(47, 125, 50, 0.15);
+  background: #ffffff;
+  color: #102014;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.doctor-dashboard-filter-pill:hover {
+  border-color: #2f7d32;
+}
+
+.doctor-dashboard-filter-pill.active {
+  background: #1d5b22;
+  color: #ffffff;
+  border-color: #1d5b22;
+}
+
+.doctor-dashboard-empty {
+  display: grid;
+  gap: 0.5rem;
+  padding: 2rem 1.25rem;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(47, 125, 50, 0.1);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+  text-align: center;
+}
+
+.doctor-dashboard-empty p {
+  margin: 0;
+  color: #51625a;
+}
+
+.doctor-dashboard-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.doctor-appointment-card {
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(47, 125, 50, 0.1);
+  border-radius: 20px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+  padding: 1.1rem;
+}
+
+.doctor-appointment-head {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.doctor-appointment-head h3 {
+  margin: 0;
+  color: #102014;
+  font-size: 1.2rem;
+}
+
+.doctor-appointment-status {
+  border-radius: 999px;
+  padding: 0.4rem 0.7rem;
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+
+.doctor-appointment-status.upcoming {
+  background: rgba(37, 99, 235, 0.1);
+  color: #1d4ed8;
+}
+
+.doctor-appointment-status.completed {
+  background: rgba(47, 125, 50, 0.1);
+  color: #1d5b22;
+}
+
+.doctor-appointment-status.cancelled {
+  background: rgba(185, 28, 28, 0.1);
+  color: #b91c1c;
+}
+
+.doctor-appointment-datetime {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0.5rem 0 0;
+  color: #6b7280;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.doctor-appointment-datetime .material-icons {
+  font-size: 1.05rem;
+}
+
+.doctor-appointment-meta {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.doctor-appointment-meta div {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.85rem;
+  border-radius: 16px;
+  background: #f8fbf8;
+}
+
+.doctor-appointment-meta span {
+  color: #6b7280;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.doctor-appointment-meta strong {
+  margin: 0;
+  color: #102014;
+}
+
+.doctor-appointment-note {
+  margin: 0.75rem 0 0;
+  padding: 0.75rem 0.85rem;
+  border-radius: 14px;
+  background: #f8fbf8;
+  color: #51625a;
+  font-size: 0.9rem;
+}
+
+.doctor-appointment-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.doctor-appointment-action-btn {
+  flex: 1;
+  min-height: 42px;
+  border-radius: 999px;
+  border: none;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.doctor-appointment-action-btn.complete {
+  background: linear-gradient(135deg, #1d5b22, #2f7d32);
+  color: #ffffff;
+}
+
+.doctor-appointment-action-btn.complete:hover {
+  background: linear-gradient(135deg, #194d1d, #2e8d34);
+}
+
+.doctor-appointment-action-btn.cancel {
+  background: #f1f3f1;
+  color: #b91c1c;
+}
+
+.doctor-appointment-action-btn.cancel:hover {
+  background: #fee2e2;
+}
+
+@media (min-width: 720px) {
+  .doctor-dashboard-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .doctor-dashboard-toolbar {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .doctor-dashboard-search-wrapper {
+    max-width: 320px;
+    flex-shrink: 0;
+  }
+}
+
+/* --- Availability page --- */
+.availability-toolbar {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.availability-form {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.availability-periods {
+  max-width: 800px;
+  margin: 0 auto 2rem;
+}
+
+.availability-periods-title {
+  margin: 0 0 0.85rem;
+  color: #102014;
+  font-size: 1.05rem;
+}
+
+.availability-period-list {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.availability-period-card {
+  padding: 1rem;
+  border-radius: 16px;
+  background: #f8fbf8;
+  border: 1px solid rgba(47, 125, 50, 0.1);
+}
+
+.availability-period-dates {
+  margin-bottom: 0.6rem;
+  font-weight: 800;
+  color: #1d5b22;
+}
+
+.availability-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: #51625a;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.availability-back-link:hover {
+  color: #2f7d32;
+}
+
+.availability-back-link .material-icons {
+  font-size: 1.15rem;
+}
+
+.availability-slot-builder {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.field-group .availability-narrow-input {
+  flex: 0 0 auto;
+  width: auto;
+  min-width: 0;
+  max-width: 9.5rem;
+}
+.field-label{
+  text-align: left;
+}
+.field-group .availability-note-input {
+  max-width: 13rem;
+}
+
+.availability-slot-to {
+  flex-shrink: 0;
+  color: #6b7280;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.availability-inline-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: black;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.availability-add-btn {
+  flex-shrink: 0;
+  padding: 0 1.1rem;
+  height: 2.75rem;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #1d5b22, #2f7d32);
+  color: #ffffff;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.availability-add-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.availability-slot-list {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 0.85rem;
+}
+
+.availability-slot-row {
+  display: grid;
+  gap: 0.6rem;
+  padding: 0.75rem 0.9rem;
+  border-radius: 14px;
+  background: #f8fbf8;
+  border: 1px solid rgba(47, 125, 50, 0.1);
+}
+
+
+.availability-slot-row-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.availability-slot-row-main > div {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.availability-generated-slots {
+  padding-top: 0.6rem;
+  border-top: 1px solid rgba(47, 125, 50, 0.1);
+}
+
+.availability-generated-label {
+  display: block;
+  margin-bottom: 0.45rem;
+  color: #6b7280;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.availability-generated-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.availability-generated-chip {
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  background: rgba(47, 125, 50, 0.08);
+  border: 1px solid rgba(47, 125, 50, 0.15);
+  color: #1d5b22;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.availability-generated-warning {
+  margin: 0.5rem 0 0;
+  color: #b45309;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.availability-custom-row {
+  display: grid;
+  gap: 0.6rem;
+  padding: 0.75rem 0.9rem;
+  border-radius: 14px;
+  background: rgba(37, 99, 235, 0.05);
+  border: 1px solid rgba(37, 99, 235, 0.15);
+}
+
+.availability-custom-row .availability-slot-day {
+  color: #1d4ed8;
+}
+
+.availability-slot-day {
+  font-weight: 800;
+  color: #102014;
+  min-width: 6rem;
+}
+
+.availability-slot-time {
+  color: #51625a;
+  font-weight: 600;
+  flex: 1 1 auto;
+}
+
+.availability-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  border: none;
+  background: #f1f3f1;
+  color: #374151;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.availability-icon-btn:hover {
+  background: #e5e7eb;
+}
+
+.availability-icon-btn.delete:hover {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.availability-icon-btn .material-icons {
+  font-size: 1.1rem;
+}
+
+.availability-empty-text {
+  margin: 0.6rem 0 0;
+  color: #6b7280;
+  font-size: 0.8rem;
+}
+
+.availability-saved-text {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0.85rem 0 0;
+  color: #1d5b22;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.availability-saved-text .material-icons {
+  font-size: 1.1rem;
+}

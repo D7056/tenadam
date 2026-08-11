@@ -1,0 +1,312 @@
+.cause-listing-page {
+  --cause-bg: #ffffff;
+  --cause-card-bg: #ffffff;
+  --cause-accent: #2f7d32;
+  --cause-accent-strong: #1d5b22;
+  --cause-text-main: #102014;
+  --cause-text-muted: #6b7280;
+
+  background-color: var(--cause-bg);
+  min-height: 100vh;
+  padding-bottom: 5rem;
+}
+
+.cause-listing-hero {
+  background: #ffffff;
+  padding: 3rem 1rem 2rem;
+  text-align: center;
+}
+
+.cause-listing-hero h1 {
+  font-size: clamp(2rem, 4vw, 3rem);
+  color: var(--cause-text-main);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin: 0 0 0.5rem;
+}
+
+.cause-listing-hero p {
+  color: var(--cause-text-muted);
+  font-size: 1.1rem;
+  margin: 0 0 2rem;
+}
+
+.cause-search-wrapper {
+  max-width: 600px;
+  margin: 0 auto;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.cause-search-wrapper input {
+  width: 100%;
+  padding: 1.2rem 1.5rem 1.2rem 3.5rem;
+  font-size: 1.05rem;
+  border: 1px solid rgba(47, 125, 50, 0.2);
+  border-radius: 999px;
+  background: var(--cause-card-bg);
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.cause-search-wrapper input:focus {
+  border-color: var(--cause-accent);
+  box-shadow: 0 0 0 4px rgba(47, 125, 50, 0.12);
+}
+
+.cause-search-icon {
+  position: absolute;
+  left: 1.2rem;
+  color: var(--cause-text-muted);
+  font-size: 1.5rem;
+}
+
+.cause-filter-rail-container {
+  max-width: 1200px;
+  margin: 0 auto 2rem;
+  padding: 0 1rem;
+}
+
+.cause-filter-rail {
+  display: flex;
+  gap: 0.75rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  scrollbar-width: none;
+}
+
+.cause-filter-rail::-webkit-scrollbar {
+  display: none;
+}
+
+.cause-filter-pill {
+  white-space: nowrap;
+  padding: 0.6rem 1.2rem;
+  border-radius: 999px;
+  border: 1px solid rgba(47, 125, 50, 0.15);
+  background: var(--cause-card-bg);
+  color: var(--cause-text-main);
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.cause-filter-pill:hover {
+  border-color: var(--cause-accent);
+}
+
+.cause-filter-pill.active {
+  background: var(--cause-accent-strong);
+  color: white;
+  border-color: var(--cause-accent-strong);
+  box-shadow: 0 4px 12px rgba(29, 91, 34, 0.2);
+}
+
+.cause-grid-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.cause-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+}
+
+.master-cause-card {
+  background: var(--cause-card-bg);
+  border-radius: 20px;
+  padding: 1.5rem;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.master-cause-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+}
+
+.cause-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.cause-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid rgba(47, 125, 50, 0.1);
+}
+
+.cause-category-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.8rem;
+}
+
+.cause-category-badge.individual {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.cause-category-badge.organization {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.my-cause-status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.6rem;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.8rem;
+}
+
+.my-cause-status-badge.approved {
+  background: rgba(47, 125, 50, 0.12);
+  color: var(--cause-accent-strong);
+}
+
+.my-cause-status-badge.pending {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.cause-card-body h3 {
+  margin: 0 0 0.25rem;
+  color: var(--cause-text-main);
+  font-size: 1.25rem;
+  font-weight: 800;
+}
+
+.cause-tagline {
+  color: var(--cause-accent);
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+}
+
+.cause-location {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--cause-text-muted);
+  font-size: 0.9rem;
+  margin: 0 0 1rem;
+}
+
+.cause-location .material-icons {
+  font-size: 1.1rem;
+  opacity: 0.7;
+}
+
+.cause-progress-track {
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(47, 125, 50, 0.12);
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.cause-progress-fill {
+  height: 100%;
+  background: linear-gradient(135deg, var(--cause-accent-strong), var(--cause-accent));
+  border-radius: 999px;
+}
+
+.cause-progress-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: var(--cause-text-muted);
+  margin-bottom: 1.5rem;
+}
+
+.cause-progress-labels strong {
+  color: var(--cause-text-main);
+}
+
+.cause-card-footer {
+  margin-top: auto;
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+
+.cause-hero-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 1.25rem;
+}
+
+
+
+.cause-my-submissions-link {
+  color: var(--cause-accent-strong);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.cause-my-submissions-link:hover {
+
+  color: var(--cause-accent);
+}
+
+.cause-share-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.7rem 1.5rem;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--cause-accent-strong), var(--cause-accent));
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 800;
+  transition: transform 0.15s ease;
+}
+
+.cause-share-btn:hover {
+  transform: translateY(-1px);
+  color: #ffffff;
+}
+
+.cause-share-btn .material-icons {
+  font-size: 1.15rem;
+}
+
+.donate-btn {
+  background: var(--cause-accent);
+  color: white;
+  text-decoration: none;
+  padding: 0.6rem 1.5rem;
+  border-radius: 12px;
+  font-weight: 700;
+  transition: background-color 0.2s;
+}
+
+.donate-btn:hover {
+  background: var(--cause-accent-strong);
+  color: white;
+}

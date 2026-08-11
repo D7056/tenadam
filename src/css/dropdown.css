@@ -1,0 +1,17 @@
+.selection {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 2.75rem;
+  font-size: 0.95rem;
+  border: 1px solid rgba(20, 44, 17, 0.1);
+  border-radius: 14px;
+  padding: 0 0.9rem;
+  background: #fbfdfb;
+  color: #102014;
+}
+
+.selection:focus {
+  outline: none;
+  border-color: #2f7d32;
+  box-shadow: 0 0 0 4px rgba(47, 125, 50, 0.12);
+}

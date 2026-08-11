@@ -1,0 +1,239 @@
+.appointments-page {
+  width: 100%;
+  padding: 1.5rem 0 3rem;
+  background: #ffffff;
+}
+
+.appointments-hero,
+.appointments-section {
+  width: min(100%, 1100px);
+  margin: 0 auto;
+}
+
+.appointments-hero {
+  display: grid;
+  gap: 1rem;
+  align-items: end;
+  padding: 0.5rem 1rem 1rem;
+}
+
+.appointments-copy {
+  display: grid;
+  gap: 0.75rem;
+  text-align: center;
+}
+
+.appointments-eyebrow,
+.section-label {
+  margin: 0;
+  color: #2f7d32;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.appointments-copy h1,
+.appointments-section h2 {
+  margin: 0;
+  color: #102014;
+}
+
+.appointments-copy h1 {
+  font-size: clamp(2rem, 4vw, 3.6rem);
+  line-height: 1;
+  max-width: 12ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.appointments-text {
+  margin: 0 auto;
+  max-width: 58ch;
+  color: #51625a;
+}
+
+.appointments-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.appointments-stat-card,
+.appointment-card,
+.appointments-empty {
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(47, 125, 50, 0.1);
+  border-radius: 20px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+
+.appointments-stat-card {
+  padding: 1rem;
+  display: grid;
+  gap: 0.2rem;
+}
+
+.appointments-stat-value {
+  color: #1d5b22;
+  font-size: 2rem;
+  font-weight: 900;
+}
+
+.appointments-stat-label {
+  color: #51625a;
+  font-weight: 600;
+}
+
+.appointments-section {
+  margin-top: 1rem;
+  padding: 0 1rem;
+}
+
+.appointments-header {
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.appointments-header .appointments-link {
+  justify-self: center;
+}
+
+.appointments-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0.65rem 1rem;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #1d5b22, #2f7d32);
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 800;
+}
+
+.appointments-empty {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1.25rem;
+}
+
+.appointments-empty h3 {
+  margin: 0;
+  color: #102014;
+}
+
+.appointments-empty p {
+  margin: 0;
+  color: #51625a;
+}
+
+.appointments-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.appointment-card {
+  padding: 1rem;
+}
+
+.appointment-card-head {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.appointment-doctor {
+  margin: 0 0 0.25rem;
+  color: #2f7d32;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.appointment-card h3 {
+  margin: 0;
+  color: #102014;
+  font-size: 1.2rem;
+}
+
+.appointment-status {
+  border-radius: 999px;
+  padding: 0.4rem 0.7rem;
+  background: rgba(47, 125, 50, 0.08);
+  color: #1d5b22;
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: capitalize;
+}
+
+.appointment-clinic {
+  margin: 0.5rem 0 0;
+  color: #51625a;
+}
+
+.appointment-meta {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.appointment-meta div,
+.appointment-note {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.85rem;
+  border-radius: 16px;
+  background: #f8fbf8;
+}
+
+.appointment-meta span,
+.appointment-note span {
+  color: #6b7280;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.appointment-meta strong,
+.appointment-note p {
+  margin: 0;
+  color: #102014;
+}
+
+.appointment-note {
+  margin-top: 0.75rem;
+}
+
+@media (min-width: 820px) {
+  .appointments-hero {
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 1.5rem;
+    padding: 0.75rem 1.5rem 1rem;
+  }
+
+  .appointments-section {
+    padding: 0 1.5rem;
+  }
+
+  .appointments-header {
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 1.5rem;
+  }
+
+  .appointments-header .appointments-link {
+    justify-self: end;
+  }
+
+  .appointments-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

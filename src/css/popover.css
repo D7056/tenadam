@@ -1,0 +1,146 @@
+
+.popover-root {
+  display: inline-block;
+  position: relative;
+}
+
+.popover-trigger {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.popover {
+  position: absolute;
+  z-index: 60;
+  background: #fff;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  color: black;
+  box-shadow: 0 10px 30px rgba(2,6,23,0.12);
+  border-radius: 10px;
+  padding: 0.5rem;
+  min-width: 50px;
+  transform-origin: top center;
+  transition: opacity 160ms ease, transform 160ms ease;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.popover.open {
+  opacity: 1;
+  transform: translateY(6px) scale(1);
+  pointer-events: auto;
+}
+
+.popover.closed {
+  opacity: 0;
+  transform: translateY(0) scale(0.98);
+}
+
+.popover-inner {
+  padding: 0.25rem;
+}
+
+/* Arrow */
+/* --- Updated Popover Arrow --- */
+.popover-arrow {
+  width: 14px;
+  height: 14px;
+  background: #fff;
+  position: absolute;
+  transform: rotate(45deg);
+  /* Use a subtle shadow on the top-left edges instead of a hard border */
+  box-shadow: -3px -3px 8px rgba(15, 23, 42, 0.04); 
+  border-radius: 2px; /* Soften the sharp point slightly */
+  z-index: -1; /* Tucks the bottom half cleanly behind the popover body */
+}
+
+/* Ensure the top placement aligns perfectly with the new 14px size */
+.placement-bottom .popover-arrow { 
+  top: -6px; 
+  left: calc(50% - 7px); 
+}
+
+/* Placement variations */
+.placement-bottom { top: 100%; transform: translateX(-50%) translateY(8px); }
+
+.placement-bottom-end { top: 100%; right: 0; left: auto; transform: translateY(8px); }
+
+
+.placement-top { bottom: 100%; transform: translateX(-50%) translateY(-8px); }
+.placement-top .popover-arrow { bottom: -6px; left: calc(50% - 6px); }
+
+.placement-left { right: 100%; top: 50%; transform: translateX(-8px) translateY(-50%); }
+.placement-left .popover-arrow { right: -6px; top: calc(50% - 6px); }
+
+.placement-right { left: 100%; top: 50%; transform: translateX(8px) translateY(-50%); }
+.placement-right .popover-arrow { left: -6px; top: calc(50% - 6px); }
+
+@media (max-width: 480px) {
+  .popover {
+    max-width: calc(100vw - 2rem);
+  }
+}
+
+/* utility for items inside popover */
+.popover-item {
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  cursor: pointer;
+  color: black;
+}
+
+.popover-item:hover {
+  background: rgba(2,6,23,0.04);
+}
+
+/* --- Popover Inner Links --- */
+.popover {
+  min-width: 200px; /* Make the menu slightly wider */
+  border-radius: 14px; /* Softer corners */
+  box-shadow: 0 12px 36px rgba(15, 23, 42, 0.12), 0 4px 12px rgba(15, 23, 42, 0.05);
+}
+
+.profile-overview {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.profile-overview a {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 0.85rem;
+  color: #102014;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border-radius: 8px;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.profile-overview a .material-icons {
+  font-size: 1.2rem;
+  color: #6b7280;
+}
+
+
+.navbars .profile-overview a:hover {
+  background-color: #f4f8ff;
+  color: #2f7d32;
+  text-decoration: none;
+}
+.profile-overview a:hover .material-icons {
+  color: #2f7d32;
+}
+
+
+.profile-overview a.logout-link:hover {
+  background-color: #fff1f2;
+  color: #e11d48;
+}
+.profile-overview a.logout-link:hover .material-icons {
+  color: #e11d48;
+}

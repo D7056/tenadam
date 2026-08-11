@@ -1,0 +1,97 @@
+.simple-page {
+  --simple-accent: #2f7d32;
+  --simple-accent-strong: #1d5b22;
+  --simple-muted: #6b7280;
+  width: 100%;
+  padding: 2rem 0 4rem;
+  background: #ffffff;
+}
+
+.simple-page-inner {
+  width: min(100%, 900px);
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.simple-eyebrow {
+  margin: 0 0 0.5rem;
+  color: var(--simple-accent);
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.simple-page h1 {
+  margin: 0 0 0.75rem;
+  color: #102014;
+  font-size: clamp(2rem, 4vw, 3rem);
+  text-align: center;
+}
+
+.simple-page-lead {
+  margin: 0 auto 2.5rem;
+  max-width: 60ch;
+  color: var(--simple-muted);
+  font-size: 1.05rem;
+  text-align: center;
+}
+
+.simple-card-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  margin-top: 2rem;
+}
+
+.simple-card {
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(47, 125, 50, 0.1);
+  border-radius: 20px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+  padding: 1.5rem;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.simple-card i.material-icons {
+  color: var(--simple-accent);
+  font-size: 1.75rem;
+}
+
+.simple-card h3 {
+  margin: 0;
+  color: #102014;
+  font-size: 1.15rem;
+}
+
+.simple-card p {
+  margin: 0;
+  color: var(--simple-muted);
+}
+
+.simple-card a {
+  color: var(--simple-accent-strong);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.simple-card a:hover {
+  text-decoration: underline;
+}
+
+.simple-section {
+  margin-top: 2.5rem;
+}
+
+.simple-section h2 {
+  margin: 0 0 0.75rem;
+  color: #102014;
+  font-size: 1.4rem;
+}
+.simple-section p {
+  margin: 0 0 0.75rem;
+  color: var(--simple-muted);
+  line-height: 1.7;
+}

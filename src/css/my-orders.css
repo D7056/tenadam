@@ -1,0 +1,252 @@
+.orders-page {
+  width: 100%;
+  padding: 1.5rem 0 3rem;
+  background: #ffffff;
+}
+
+.orders-hero,
+.orders-section {
+  width: min(100%, 1100px);
+  margin: 0 auto;
+}
+
+.orders-hero {
+  display: grid;
+  gap: 1rem;
+  align-items: end;
+  padding: 0.5rem 1rem 1rem;
+}
+
+.orders-copy {
+  display: grid;
+  gap: 0.75rem;
+  text-align: center;
+}
+
+.orders-eyebrow,
+.orders-section-label {
+  margin: 0;
+  color: #2f7d32;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.orders-copy h1,
+.orders-section h2 {
+  margin: 0;
+  color: #102014;
+}
+
+.orders-copy h1 {
+  font-size: clamp(2rem, 4vw, 3.6rem);
+  line-height: 1;
+  max-width: 14ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.orders-text {
+  margin: 0 auto;
+  max-width: 58ch;
+  color: #51625a;
+}
+
+.orders-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.orders-stat-card,
+.order-history-card,
+.orders-empty {
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(47, 125, 50, 0.1);
+  border-radius: 20px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+
+.orders-stat-card {
+  padding: 1rem;
+  display: grid;
+  gap: 0.2rem;
+}
+
+.orders-stat-value {
+  color: #1d5b22;
+  font-size: 2rem;
+  font-weight: 900;
+}
+
+.orders-stat-label {
+  color: #51625a;
+  font-weight: 600;
+}
+
+.orders-section {
+  margin-top: 1rem;
+  padding: 0 1rem;
+}
+
+.orders-header {
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.orders-header .orders-link {
+  justify-self: center;
+}
+
+.orders-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0.65rem 1rem;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #1d5b22, #2f7d32);
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 800;
+}
+
+.orders-empty {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1.25rem;
+}
+
+.orders-empty h3 {
+  margin: 0;
+  color: #102014;
+}
+
+.orders-empty p {
+  margin: 0;
+  color: #51625a;
+}
+
+.orders-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.order-history-card {
+  padding: 1rem;
+}
+
+.order-history-head {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.order-eyebrow {
+  margin: 0 0 0.25rem;
+  color: #2f7d32;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.order-history-card h3 {
+  margin: 0;
+  color: #102014;
+  font-size: 1.4rem;
+}
+
+.order-status {
+  border-radius: 999px;
+  padding: 0.4rem 0.7rem;
+  background: rgba(47, 125, 50, 0.08);
+  color: #1d5b22;
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+
+.order-items-list {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.order-line-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: 12px;
+  background: #f8fbf8;
+  font-size: 0.9rem;
+}
+
+.order-line-item span:first-child {
+  color: #102014;
+}
+
+.order-line-item span:last-child {
+  color: #51625a;
+}
+
+.order-history-meta {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.order-history-meta div {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.85rem;
+  border-radius: 16px;
+  background: #f8fbf8;
+}
+
+.order-history-meta span {
+  color: #6b7280;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.order-history-meta strong {
+  margin: 0;
+  color: #102014;
+}
+
+@media (min-width: 820px) {
+  .orders-hero {
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 1.5rem;
+    padding: 0.75rem 1.5rem 1rem;
+  }
+
+  .orders-section {
+    padding: 0 1.5rem;
+  }
+
+  .orders-header {
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 1.5rem;
+  }
+
+  .orders-header .orders-link {
+    justify-self: end;
+  }
+
+  .orders-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
