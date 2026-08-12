@@ -75,7 +75,7 @@
   background: var(--appointment-accent-strong);
   color: #ffffff;
   border-color: var(--appointment-accent-strong);
-  box-shadow: 0 10px 18px rgba(29, 91, 34, 0.22);
+  
 }
 
 .method-grid {

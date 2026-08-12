@@ -1,4 +1,4 @@
-import { useContext, useMemo } from "react";
+import { useContext, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Cards from "../components/Cards";
 import MedicineImage from "../assets/medicine.jpeg";
@@ -15,6 +15,8 @@ function Home() {
   const cart = useContext(CartContext);
   const appointmentContext = useContext(AppointmentContext);
 
+  const [primary, setPrimary]=useState(true);
+
   const cartItemCount = cart?.counter ?? 0;
   const hasCartItems = cartItemCount > 0;
 
@@ -29,6 +31,15 @@ function Home() {
     )[0];
   }, [appointmentContext?.appointments]);
 
+  const handleActionBtn1= ()=>{
+    setPrimary(true)
+  }
+  const handleActionBtn2=()=>{
+    setPrimary(false)
+  }
+
+  
+
   const hasNotifications = hasCartItems || !!nextAppointment;
 
   return (
@@ -40,10 +51,10 @@ function Home() {
           <p className="hero-text">{t("home.heroText")}</p>
 
           <div className="hero-actions">
-            <Link className="hero-action primary" to="/medicine">
+            <Link className={`hero-action ${primary? "primary":"secondary"}`} onMouseOver={handleActionBtn1} to="/medicine">
               {t("home.shopMedicine")}
             </Link>
-            <Link className="hero-action secondary" to="/doctorlisting">
+            <Link className={`hero-action ${!primary?"primary":"secondary"}`} onMouseOver={handleActionBtn2} to="/doctorlisting">
               {t("home.bookAppointment")}
             </Link>
           </div>

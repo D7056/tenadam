@@ -1,9 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
-import { onAuthStateChanged } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
 import { useTranslation } from "react-i18next";
-import { auth, db } from "../firebase";
 import { DonationContext } from "../context/donationContext";
 import AvatarImage from "../assets/avatar.png";
 import Charity from "../assets/charity.webp";
@@ -19,16 +16,6 @@ type DisplayCause = {
   image: string;
   goalAmount: number;
   raisedAmount: number;
-};
-
-type UserRecord = {
-  firstName?: string;
-  lastName?: string;
-  name?: string;
-  phoneNumber?: string;
-  telephone?: string;
-  phone?: string;
-  email?: string;
 };
 
 type DonationStatus = "pending" | "paid" | "failed";
@@ -50,9 +37,17 @@ export default function GiveHope() {
 
   const [amount, setAmount] = useState<number | null>(presetAmounts[1]);
   const [customAmount, setCustomAmount] = useState("");
-  const [donorName, setDonorName] = useState("");
-  const [donorPhone, setDonorPhone] = useState("");
-  const [donorEmail, setDonorEmail] = useState("");
+  const [donorName, setDonorName] = useState(() => {
+    const firstName = localStorage.getItem("first_name");
+    const lastName = localStorage.getItem("last_name");
+    return [firstName, lastName].filter(Boolean).join(" ");
+  });
+  const [donorPhone, setDonorPhone] = useState(
+    () => localStorage.getItem("phone_number") ?? "",
+  );
+  const [donorEmail, setDonorEmail] = useState(
+    () => localStorage.getItem("email") ?? "",
+  );
   const [note, setNote] = useState("");
   const [redirecting, setRedirecting] = useState(false);
 
@@ -63,37 +58,6 @@ export default function GiveHope() {
   const [checkingReturn, setCheckingReturn] = useState(!!returningTxRef);
 
   const finalAmount = customAmount ? Number(customAmount) : amount;
-
-  useEffect(() => {
-    const unsub = onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        return;
-      }
-
-      const collections = ["users", "providers"];
-
-      for (const collection of collections) {
-        const snapshot = await getDoc(doc(db, collection, user.uid));
-        if (!snapshot.exists()) {
-          continue;
-        }
-
-        const data = snapshot.data() as UserRecord;
-        const fullName =
-          [data.firstName, data.lastName].filter(Boolean).join(" ") ||
-          data.name ||
-          user.displayName ||
-          "";
-
-        setDonorName(fullName);
-        setDonorPhone(data.phoneNumber || data.telephone || data.phone || "");
-        setDonorEmail(data.email || user.email || "");
-        return;
-      }
-    });
-
-    return () => unsub();
-  }, []);
 
   useEffect(() => {
     const loadCause = async () => {
