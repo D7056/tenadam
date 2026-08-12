@@ -14,6 +14,7 @@
     "appointments": "Appointments",
     "donations": "Donations",
     "orders": "Orders",
+    "notifications": "Notifications",
     "guest": "Guest",
     "viewProfile": "View Profile",
     "logout": "Logout",
@@ -148,7 +149,8 @@
     "status": {
       "upcoming": "upcoming",
       "completed": "completed",
-      "cancelled": "cancelled"
+      "cancelled": "cancelled",
+      "past": "past"
     }
   },
   "causeListing": {
@@ -251,6 +253,12 @@
     "browseCauses": "Browse causes",
     "donor": "Donor",
     "reference": "Reference",
+    "method": "Method",
+    "methods": {
+      "bank": "Bank transfer",
+      "telebirr": "Telebirr",
+      "chapa": "Chapa"
+    },
     "status": {
       "pending": "pending",
       "confirmed": "confirmed"

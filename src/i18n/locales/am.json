@@ -14,6 +14,7 @@
     "appointments": "ቀጠሮዎች",
     "donations": "ልገሳዎች",
     "orders": "ትዕዛዞች",
+    "notifications": "ማሳወቂያዎች",
     "guest": "እንግዳ",
     "viewProfile": "መገለጫ ይመልከቱ",
     "logout": "ውጣ",
@@ -148,7 +149,8 @@
     "status": {
       "upcoming": "የሚመጣ",
       "completed": "የተጠናቀቀ",
-      "cancelled": "የተሰረዘ"
+      "cancelled": "የተሰረዘ",
+      "past": "ያለፈ"
     },
     "emial":"ኢ-ሜይል"
   },
@@ -252,6 +254,12 @@
     "browseCauses": "ዓላማዎችን ያስሱ",
     "donor": "ለጋሽ",
     "reference": "ማጣቀሻ",
+    "method": "ዘዴ",
+    "methods": {
+      "bank": "የባንክ ዝውውር",
+      "telebirr": "ቴሌብር",
+      "chapa": "ቻፓ"
+    },
     "status": {
       "pending": "በመጠባበቅ ላይ",
       "confirmed": "የተረጋገጠ"

@@ -22,6 +22,20 @@ type ChildrenProp = {
   children: ReactNode;
 };
 
+export function isAppointmentPastDue(appointment: AppointmentItem) {
+  if (appointment.status !== "upcoming") return false;
+  const appointmentTime = new Date(
+    `${appointment.dateKey}T${appointment.time}`,
+  ).getTime();
+  return !Number.isNaN(appointmentTime) && appointmentTime < Date.now();
+}
+
+export function getDisplayStatus(
+  appointment: AppointmentItem,
+): AppointmentItem["status"] | "past" {
+  return isAppointmentPastDue(appointment) ? "past" : appointment.status;
+}
+
 type AppointmentContextType = {
   appointments: AppointmentItem[];
   counter: number;
@@ -58,7 +72,15 @@ export function AppointmentContextProvider({ children }: ChildrenProp) {
     } catch {}
   }, [appointments]);
 
-  const counter = useMemo(() => appointments.length, [appointments]);
+  const counter = useMemo(
+    () =>
+      appointments.filter(
+        (appointment) =>
+          appointment.status === "upcoming" &&
+          !isAppointmentPastDue(appointment),
+      ).length,
+    [appointments],
+  );
 
   const addAppointment = (
     appointment: Omit<AppointmentItem, "id" | "createdAt">,

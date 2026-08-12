@@ -1,10 +1,7 @@
 import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { onAuthStateChanged } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { auth, db } from "../firebase";
 import AvatarImage from "../assets/avatar.png";
 import { AppointmentContext } from "../context/appointmentContext";
 import "../css/appointment.css";
@@ -15,15 +12,6 @@ type Doctor = {
   specialty: string;
   clinic: string;
   image: string;
-};
-
-type UserRecord = {
-  firstName?: string;
-  lastName?: string;
-  name?: string;
-  phoneNumber?: string;
-  telephone?: string;
-  phone?: string;
 };
 
 type ApiRange = {
@@ -274,8 +262,14 @@ export default function Appointment() {
   const [selectedTime, setSelectedTime] = useState("");
   const [reason, setReason] = useState(reasons[0]);
   const [reasonNote, setReasonNote] = useState("");
-  const [patientName, setPatientName] = useState("");
-  const [patientPhone, setPatientPhone] = useState("");
+  const [patientName, setPatientName] = useState(() => {
+    const firstName = localStorage.getItem("first_name");
+    const lastName = localStorage.getItem("last_name");
+    return [firstName, lastName].filter(Boolean).join(" ");
+  });
+  const [patientPhone, setPatientPhone] = useState(
+    () => localStorage.getItem("phone_number") ?? "",
+  );
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [doctorsLoading, setDoctorsLoading] = useState(true);
   const [selectedDoctorId, setSelectedDoctorId] = useState("");
@@ -452,36 +446,6 @@ export default function Appointment() {
     bookedSlots,
     customTimes,
   ]);
-
-  useEffect(() => {
-    const unsub = onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        return;
-      }
-
-      const collections = ["users", "providers"];
-
-      for (const collection of collections) {
-        const snapshot = await getDoc(doc(db, collection, user.uid));
-        if (!snapshot.exists()) {
-          continue;
-        }
-
-        const data = snapshot.data() as UserRecord;
-        const fullName =
-          [data.firstName, data.lastName].filter(Boolean).join(" ") ||
-          data.name ||
-          user.displayName ||
-          "";
-
-        setPatientName(fullName);
-        setPatientPhone(data.phoneNumber || data.telephone || data.phone || "");
-        return;
-      }
-    });
-
-    return () => unsub();
-  }, []);
 
   useEffect(() => {
     if (!calendarOpen) return;
