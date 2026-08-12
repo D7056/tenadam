@@ -58,6 +58,12 @@ function NavBar({ name, img }: NavBarProps) {
     dashboard === "/doctor" ||
     dashboard === "/deliveryman";
 
+  const notificationCount =
+    (cart?.counter ?? 0) +
+    (appointments?.counter ?? 0) +
+    (donations?.counter ?? 0) +
+    (orders?.counter ?? 0);
+
   if (!isProviderDashboard) {
     return (
       <nav className="navbars">
@@ -107,68 +113,66 @@ function NavBar({ name, img }: NavBarProps) {
                 {t("nav.contact")}
               </Link>
             </li>
-            <li>
-              <Link
-                className="navbar-link navbar-badge-link"
-                to="/cart"
-                onClick={closeMenu}
+            <li className="navbar-bell-item">
+              <PopOver
+                trigger={
+                  <button
+                    type="button"
+                    className="navbar-bell-btn"
+                    aria-label={t("nav.notifications")}
+                  >
+                    <span className="navbar-badge-wrap">
+                      <i className="material-icons">notifications</i>
+                      {notificationCount > 0 && (
+                        <span className="counter">{notificationCount}</span>
+                      )}
+                    </span>
+                    <span className="navbar-link-label">
+                      {t("nav.notifications")}
+                    </span>
+                  </button>
+                }
+                placement="bottom-end"
               >
-                <span className="navbar-badge-wrap">
-                  <i className="material-icons">shopping_cart</i>
-
-                  {cart && cart.counter > 0 && (
-                    <span className="counter">{cart.counter}</span>
-                  )}
-                </span>
-                <span className="navbar-link-label">{t("nav.cart")}</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                className="navbar-link navbar-badge-link"
-                to="/appointments"
-                onClick={closeMenu}
-              >
-                <span className="navbar-badge-wrap">
-                  <i className="material-icons">calendar_month</i>
-                  {appointments && appointments.counter > 0 && (
-                    <span className="counter">{appointments.counter}</span>
-                  )}
-                </span>
-                <span className="navbar-link-label">
-                  {t("nav.appointments")}
-                </span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                className="navbar-link navbar-badge-link"
-                to="/donations"
-                onClick={closeMenu}
-              >
-                <span className="navbar-badge-wrap">
-                  <i className="material-icons">volunteer_activism</i>
-                  {donations && donations.counter > 0 && (
-                    <span className="counter">{donations.counter}</span>
-                  )}
-                </span>
-                <span className="navbar-link-label">{t("nav.donations")}</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                className="navbar-link navbar-badge-link"
-                to="/orders"
-                onClick={closeMenu}
-              >
-                <span className="navbar-badge-wrap">
-                  <i className="material-icons">receipt_long</i>
-                  {orders && orders.counter > 0 && (
-                    <span className="counter">{orders.counter}</span>
-                  )}
-                </span>
-                <span className="navbar-link-label">{t("nav.orders")}</span>
-              </Link>
+                <div className="profile-overview">
+                  <Link to="/cart" onClick={closeMenu}>
+                    <i className="material-icons">shopping_cart</i>{" "}
+                    {t("nav.cart")}
+                    {cart && cart.counter > 0 && (
+                      <span className="counter counter-inline">
+                        {cart.counter}
+                      </span>
+                    )}
+                  </Link>
+                  <Link to="/appointments" onClick={closeMenu}>
+                    <i className="material-icons">calendar_month</i>{" "}
+                    {t("nav.appointments")}
+                    {appointments && appointments.counter > 0 && (
+                      <span className="counter counter-inline">
+                        {appointments.counter}
+                      </span>
+                    )}
+                  </Link>
+                  <Link to="/donations" onClick={closeMenu}>
+                    <i className="material-icons">volunteer_activism</i>{" "}
+                    {t("nav.donations")}
+                    {donations && donations.counter > 0 && (
+                      <span className="counter counter-inline">
+                        {donations.counter}
+                      </span>
+                    )}
+                  </Link>
+                  <Link to="/orders" onClick={closeMenu}>
+                    <i className="material-icons">receipt_long</i>{" "}
+                    {t("nav.orders")}
+                    {orders && orders.counter > 0 && (
+                      <span className="counter counter-inline">
+                        {orders.counter}
+                      </span>
+                    )}
+                  </Link>
+                </div>
+              </PopOver>
             </li>
             <li>
               <LanguageSwitcher />

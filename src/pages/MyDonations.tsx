@@ -1,13 +1,8 @@
-import { useContext, useMemo } from "react";
+import { useContext, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { DonationContext } from "../context/donationContext";
 import "../css/my-donations.css";
-
-const methodKeys: Record<string, string> = {
-  bank: "bankTransfer",
-  telebirr: "telebirr",
-};
 
 function formatDate(iso: string) {
   return new Intl.DateTimeFormat("en-US", {
@@ -22,6 +17,10 @@ function MyDonations() {
     t("common.priceLabel", { price: amount.toLocaleString() });
   const donationContext = useContext(DonationContext);
   const donations = donationContext?.donations ?? [];
+
+  useEffect(() => {
+    donationContext?.markDonationsSeen();
+  }, []);
 
   const sortedDonations = useMemo(
     () =>
@@ -95,11 +94,9 @@ function MyDonations() {
                 </div>
                 <div className="donation-history-meta">
                   <div>
-                    <span>{t("giveHope.method")}</span>
+                    <span>{t("myDonations.method")}</span>
                     <strong>
-                      {t(
-                        `giveHope.methods.${methodKeys[donation.paymentMethod] ?? "bankTransfer"}`,
-                      )}
+                      {t(`myDonations.methods.${donation.paymentMethod}`)}
                     </strong>
                   </div>
                   <div>

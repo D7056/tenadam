@@ -1,4 +1,4 @@
-import { useContext, useMemo } from "react";
+import { useContext, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { OrderContext } from "../context/orderContext";
@@ -18,7 +18,15 @@ function MyOrders() {
   const orderContext = useContext(OrderContext);
   const orders = orderContext?.orders ?? [];
 
+
+
+  useEffect(() => {
+    orderContext?.markOrdersSeen();
+  }, []);
+
+
   const sortedOrders = useMemo(
+    
     () =>
       [...orders].sort((left, right) =>
         right.createdAt.localeCompare(left.createdAt),

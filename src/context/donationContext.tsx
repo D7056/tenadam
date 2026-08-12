@@ -31,11 +31,13 @@ type DonationContextType = {
   ) => void;
   removeDonation: (id: string) => void;
   clearDonations: () => void;
+  markDonationsSeen: () => void;
 };
 
 
 
 const STORAGE_KEY = "tenadam_donations_v1";
+const SEEN_KEY = "tenadam_donations_seen_v1";
 
 export const DonationContext = createContext<DonationContextType | undefined>(
   undefined,
@@ -51,13 +53,26 @@ export function DonationContextProvider({ children }: ChildrenProp) {
     }
   });
 
+  const [lastSeenAt, setLastSeenAt] = useState<string>(
+    () => localStorage.getItem(SEEN_KEY) ?? "",
+  );
+
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(donations));
     } catch {}
   }, [donations]);
 
-  const counter = useMemo(() => donations.length, [donations]);
+  useEffect(() => {
+    try {
+      localStorage.setItem(SEEN_KEY, lastSeenAt);
+    } catch {}
+  }, [lastSeenAt]);
+
+  const counter = useMemo(
+    () => donations.filter((donation) => donation.createdAt > lastSeenAt).length,
+    [donations, lastSeenAt],
+  );
 
   const addDonation = (
     donation: Omit<DonationItem, "id" | "createdAt" | "status"> & {
@@ -84,6 +99,8 @@ export function DonationContextProvider({ children }: ChildrenProp) {
 
   const clearDonations = () => setDonations([]);
 
+  const markDonationsSeen = () => setLastSeenAt(new Date().toISOString());
+
   return (
     <DonationContext.Provider
       value={{
@@ -92,6 +109,7 @@ export function DonationContextProvider({ children }: ChildrenProp) {
         addDonation,
         removeDonation,
         clearDonations,
+        markDonationsSeen,
       }}
     >
       {children}

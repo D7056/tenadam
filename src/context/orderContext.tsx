@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 
 export type OrderLineItem = {
@@ -29,9 +29,11 @@ type OrderContextType = {
   orders: Order[];
   counter: number;
   addOrder: (order: Omit<Order, "id" | "createdAt" | "status">) => void;
+  markOrdersSeen: () => void;
 };
 
 const STORAGE_KEY = "tenadam_orders_v1";
+const SEEN_KEY = "tenadam_orders_seen_v1";
 
 export const OrderContext = createContext<OrderContextType | undefined>(
   undefined,
@@ -47,13 +49,26 @@ export function OrderContextProvider({ children }: ChildrenProp) {
     }
   });
 
+  const [lastSeenAt, setLastSeenAt] = useState<string>(
+    () => localStorage.getItem(SEEN_KEY) ?? "",
+  );
+
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
     } catch {}
   }, [orders]);
 
-  const counter = orders.length;
+  useEffect(() => {
+    try {
+      localStorage.setItem(SEEN_KEY, lastSeenAt);
+    } catch {}
+  }, [lastSeenAt]);
+
+  const counter = useMemo(
+    () => orders.filter((order) => order.createdAt > lastSeenAt).length,
+    [orders, lastSeenAt],
+  );
 
   const addOrder = (order: Omit<Order, "id" | "createdAt" | "status">) => {
     const id = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
@@ -70,8 +85,12 @@ export function OrderContextProvider({ children }: ChildrenProp) {
     ]);
   };
 
+  const markOrdersSeen = () => setLastSeenAt(new Date().toISOString());
+
   return (
-    <OrderContext.Provider value={{ orders, counter, addOrder }}>
+    <OrderContext.Provider
+      value={{ orders, counter, addOrder, markOrdersSeen }}
+    >
       {children}
     </OrderContext.Provider>
   );

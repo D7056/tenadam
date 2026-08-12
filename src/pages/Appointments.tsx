@@ -1,7 +1,10 @@
 import { useContext, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { AppointmentContext } from "../context/appointmentContext";
+import {
+  AppointmentContext,
+  getDisplayStatus,
+} from "../context/appointmentContext";
 import "../css/appointments.css";
 
 function Appointments() {
@@ -20,7 +23,7 @@ function Appointments() {
   );
 
   const upcomingCount = appointments.filter(
-    (appointment) => appointment.status === "upcoming",
+    (appointment) => getDisplayStatus(appointment) === "upcoming",
   ).length;
 
   return (
@@ -35,7 +38,7 @@ function Appointments() {
         <div className="appointments-stats">
           <div className="appointments-stat-card">
             <span className="appointments-stat-value">
-              {appointmentContext?.counter ?? 0}
+              {appointments.length}
             </span>
             <span className="appointments-stat-label">
               {t("appointments.totalBooked")}
@@ -81,7 +84,7 @@ function Appointments() {
                     <h3>{appointment.specialty}</h3>
                   </div>
                   <span className="appointment-status">
-                    {t(`appointments.status.${appointment.status}`)}
+                    {t(`appointments.status.${getDisplayStatus(appointment)}`)}
                   </span>
                 </div>
 

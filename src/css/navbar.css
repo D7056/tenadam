@@ -105,21 +105,11 @@
     font-weight: 800;
 }
 
-.navbar-badge-link {
-    display: inline-flex;
-    align-items: center;
-}
-
 .navbar-badge-wrap {
     position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-}
-
-.navbar-badge-link .material-icons {
-    font-size: 1.35rem;
-    line-height: 1;
 }
 
 .navbars .navbar-links a:hover{
@@ -272,8 +262,41 @@
     outline-offset: 2px;
 }
 
+.navbar-bell-item {
+    display: inline-flex;
+    align-items: center;
+}
+
+.navbar-bell-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    background: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 0.35rem;
+    border-radius: 8px;
+}
+
 .navbar-link-label {
     display: none;
+}
+
+.navbar-bell-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.navbar-bell-btn .material-icons {
+    font-size: 1.35rem;
+    line-height: 1;
+}
+
+.counter-inline {
+    position: static;
+    margin-left: auto;
+    box-shadow: none;
 }
 
 @media (max-width: 767px) {
@@ -314,7 +337,8 @@
     }
 
     .navbars .navbar-links a,
-    .navbars .navbar-links .profile-trigger-btn {
+    .navbars .navbar-links .profile-trigger-btn,
+    .navbars .navbar-links .navbar-bell-btn {
         width: 100%;
         box-sizing: border-box;
         padding: 0.85rem 1.25rem;
@@ -326,10 +350,6 @@
 
     .navbars .navbar-links a::after {
         display: none;
-    }
-
-    .navbar-badge-link {
-        gap: 0.75rem;
     }
 
     .navbar-link-label {
@@ -373,7 +393,7 @@
     }
 
     .navbars .navbar-links .popover.open {
-        max-height: 200px;
+        max-height: 320px;
         pointer-events: auto;
         padding: 0.35rem 0;
     }
