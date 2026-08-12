@@ -241,15 +241,7 @@ a.hero-panel-card:hover {
     }
 
     .home-grid {
-        grid-auto-flow: column;
-        grid-auto-columns: minmax(78vw, 1fr);
-        overflow-x: auto;
-        padding-bottom: 0.25rem;
-        scroll-snap-type: x proximity;
-    }
-
-    .home-grid > .col-12 {
-        scroll-snap-align: start;
+        grid-template-columns: 1fr;
     }
 
     .home-page {

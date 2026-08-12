@@ -31,8 +31,6 @@ export default function MedicineDetail({
 }: Props) {
   const { t } = useTranslation();
   const overlayRef = useRef<HTMLDivElement | null>(null);
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const imgRef = useRef<HTMLImageElement | null>(null);
   const [dosage, setDosage] = useState(medicine.dosages?.[0] ?? "");
   const [quantity, setQuantity] = useState(1);
 
@@ -52,43 +50,6 @@ export default function MedicineDetail({
     return () => document.removeEventListener("keydown", onKey);
   }, [close]);
 
-
-  useEffect(() => {
-    const adjust = () => {
-      const img = imgRef.current;
-      const container = containerRef.current;
-      if (!img || !container) return;
-      const containerRect = container.getBoundingClientRect();
-      const titleEl = container.querySelector<HTMLElement>(".popup-title");
-      const titleH = titleEl ? titleEl.getBoundingClientRect().height : 0;
-      const footerEl = container.querySelector<HTMLElement>(".popup-actions");
-      const footerH = footerEl ? footerEl.getBoundingClientRect().height : 0;
-      const reserve = 160;
-      const available = Math.max(
-        120,
-        containerRect.height - titleH - footerH - reserve,
-      );
-      const naturalH = img.naturalHeight || img.getBoundingClientRect().height;
-      const cap = Math.min(available, window.innerHeight * 0.8);
-      if (naturalH > cap) {
-        img.style.maxHeight = `${cap}px`;
-      } else {
-        img.style.maxHeight = "";
-      }
-    };
-    adjust();
-
-    const img = imgRef.current;
-    const onLoad = () => adjust();
-    if (img) {
-      img.addEventListener("load", onLoad);
-    }
-    window.addEventListener("resize", adjust);
-    return () => {
-      if (img) img.removeEventListener("load", onLoad);
-      window.removeEventListener("resize", adjust);
-    };
-  }, []);
 
   const clickOverlay = (e: React.MouseEvent) => {
     if (e.target === overlayRef.current) close();
@@ -118,11 +79,7 @@ export default function MedicineDetail({
         role="dialog"
         aria-modal="true"
       >
-        <div
-          className="popup-container"
-          ref={containerRef}
-          onClick={(e) => e.stopPropagation()}
-        >
+        <div className="popup-container" onClick={(e) => e.stopPropagation()}>
           <div className="inner-popup">
             <button
               className="popup-close"
@@ -141,7 +98,6 @@ export default function MedicineDetail({
               {medicine.image && (
                 <div style={{ marginBottom: 8 }}>
                   <img
-                    ref={imgRef}
                     src={medicine.image}
                     alt={medicine.title}
                     style={{
@@ -167,6 +123,7 @@ export default function MedicineDetail({
                 <div className="col-sm-7 col-md-6">
                   <select
                     value={dosage}
+                    className="select-dosage"
                     onChange={(e) => setDosage(e.target.value)}
                   >
                     {(medicine.dosages ?? [""]).map((d) => (
