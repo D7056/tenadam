@@ -1,5 +1,5 @@
 import { useContext, useEffect, useMemo, useRef, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import AvatarImage from "../assets/avatar.png";
@@ -12,6 +12,30 @@ type Doctor = {
   specialty: string;
   clinic: string;
   image: string;
+  feeEnabled: boolean;
+  feeAmount: number | null;
+};
+
+type PaymentStatus = "not_required" | "pending" | "paid" | "failed";
+
+type AppointmentDetail = {
+  id: number;
+  doctor: number;
+  doctor_name: string;
+  doctor_specialty: string;
+  doctor_clinic: string;
+  date: string;
+  start_time: string;
+  end_time: string;
+  reason: string;
+  reason_note: string;
+  patient_name: string;
+  patient_phone: string;
+  patient_email: string;
+  status: string;
+  payment_status: PaymentStatus;
+  fee_amount: string | null;
+  tx_ref: string | null;
 };
 
 type ApiRange = {
@@ -254,9 +278,13 @@ export default function Appointment() {
   const { t } = useTranslation();
   const reasonLabel = (item: string) =>
     t(`appointment.reasons.${reasonKeys[item] ?? "generalConsultation"}`);
+  const formatEtb = (value: number) =>
+    t("common.priceLabel", { price: value.toFixed(2) });
   const appointmentContext = useContext(AppointmentContext);
   const navigate = useNavigate();
   const { doctorId } = useParams();
+  const [searchParams] = useSearchParams();
+  const returningTxRef = searchParams.get("tx_ref");
   const [weekAnchor, setWeekAnchor] = useState(() => startOfWeek(new Date()));
   const [selectedDateKey, setSelectedDateKey] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
@@ -270,6 +298,13 @@ export default function Appointment() {
   const [patientPhone, setPatientPhone] = useState(
     () => localStorage.getItem("phone_number") ?? "",
   );
+  const [patientEmail, setPatientEmail] = useState(
+    () => localStorage.getItem("email") ?? "",
+  );
+  const [redirecting, setRedirecting] = useState(false);
+  const [returnAppointment, setReturnAppointment] =
+    useState<AppointmentDetail | null>(null);
+  const [checkingReturn, setCheckingReturn] = useState(!!returningTxRef);
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [doctorsLoading, setDoctorsLoading] = useState(true);
   const [selectedDoctorId, setSelectedDoctorId] = useState("");
@@ -341,12 +376,16 @@ export default function Appointment() {
             last_name: string;
             specialty: string;
             clinic: string;
+            fee_enabled: boolean;
+            fee_amount: string | null;
           }) => ({
             id: String(doc.id),
             name: `Dr. ${doc.first_name} ${doc.last_name}`,
             specialty: doc.specialty,
             clinic: doc.clinic,
             image: AvatarImage,
+            feeEnabled: doc.fee_enabled,
+            feeAmount: doc.fee_amount ? Number(doc.fee_amount) : null,
           }),
         );
 
@@ -469,11 +508,61 @@ export default function Appointment() {
     setWeekAnchor((current) => addDays(current, direction * 7));
   };
 
+  const recordedTxRefs = useRef(new Set<string>());
+
+  useEffect(() => {
+    if (!returningTxRef) return;
+
+    const checkStatus = async () => {
+      setCheckingReturn(true);
+      try {
+        const response = await fetch(
+          `http://127.0.0.1:8000/api/appointments/payments/verify/${returningTxRef}/`,
+        );
+        if (!response.ok) throw new Error("Failed to verify payment");
+        const data: AppointmentDetail = await response.json();
+        setReturnAppointment(data);
+
+        if (
+          data.payment_status === "paid" &&
+          !recordedTxRefs.current.has(returningTxRef)
+        ) {
+          recordedTxRefs.current.add(returningTxRef);
+          appointmentContext?.addAppointment({
+            doctorName: data.doctor_name,
+            specialty: data.doctor_specialty,
+            clinic: data.doctor_clinic,
+            dateKey: data.date,
+            dateLabel: formatLongDate(parseDateKey(data.date)),
+            time: data.start_time.slice(0, 5),
+            timeLabel: formatClock(data.start_time.slice(0, 5)),
+            reason: data.reason,
+            reasonNote: data.reason_note,
+            patientName: data.patient_name,
+            patientPhone: data.patient_phone,
+            status: "upcoming",
+          });
+        }
+      } catch {
+        setReturnAppointment(null);
+      } finally {
+        setCheckingReturn(false);
+      }
+    };
+
+    checkStatus();
+  }, [returningTxRef]);
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!patientName.trim() || !patientPhone.trim()) {
       alert(t("appointment.alertMissingContact"));
+      return;
+    }
+
+    if (selectedDoctor.feeEnabled && !patientEmail.trim()) {
+      alert(t("appointment.alertMissingEmail"));
       return;
     }
 
@@ -484,6 +573,7 @@ export default function Appointment() {
 
     const endTime = toTimeString(toMinutes(selectedTime) + durationMinutes);
 
+    setRedirecting(true);
     try {
       const response = await fetch(
         "http://127.0.0.1:8000/api/appointments/book/",
@@ -499,11 +589,13 @@ export default function Appointment() {
             reason_note: reasonNote,
             patient_name: patientName,
             patient_phone: patientPhone,
+            patient_email: patientEmail,
           }),
         },
       );
 
       if (!response.ok) {
+        setRedirecting(false);
         alert(t("appointment.bookingFailed"));
         const bookedRes = await fetch(
           `http://127.0.0.1:8000/api/appointments/doctors/${selectedDoctorId}/booked-slots/?from=${formatDateKey(new Date())}&to=${formatDateKey(addDays(new Date(), 180))}`,
@@ -511,7 +603,15 @@ export default function Appointment() {
         setBookedSlots(bookedRes.ok ? await bookedRes.json() : []);
         return;
       }
+
+      const data = await response.json();
+
+      if (data.payment_required) {
+        window.location.href = data.checkout_url;
+        return;
+      }
     } catch {
+      setRedirecting(false);
       alert(t("appointment.bookingFailed"));
       return;
     }
@@ -533,6 +633,60 @@ export default function Appointment() {
 
     navigate("/appointments");
   };
+
+  if (returningTxRef) {
+    if (checkingReturn) {
+      return (
+        <div className="appointment-page container content-with-nav">
+          <p>{t("appointment.checkingPayment")}</p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="appointment-page container content-with-nav">
+        <div className="appointment-shell">
+          <section className="booking-card hero-card success-card">
+            <p className="eyebrow">{t("appointment.thankYou")}</p>
+            {returnAppointment?.payment_status === "paid" ? (
+              <>
+                <h1>{t("appointment.confirmationTitlePaid")}</h1>
+                <p className="muted-copy">
+                  {t("appointment.confirmationTextPaid", {
+                    doctor: returnAppointment.doctor_name,
+                    date: formatLongDate(parseDateKey(returnAppointment.date)),
+                    time: formatClock(returnAppointment.start_time.slice(0, 5)),
+                  })}
+                </p>
+              </>
+            ) : returnAppointment?.payment_status === "pending" ? (
+              <>
+                <h1>{t("appointment.confirmationTitlePending")}</h1>
+                <p className="muted-copy">
+                  {t("appointment.confirmationTextPending")}
+                </p>
+              </>
+            ) : (
+              <>
+                <h1>{t("appointment.confirmationTitleFailed")}</h1>
+                <p className="muted-copy">
+                  {t("appointment.confirmationTextFailed")}
+                </p>
+              </>
+            )}
+
+            <Link className="cta-button" to="/appointments">
+              {t("appointment.viewMyAppointments")}
+            </Link>
+            <Link className="back-link" to="/doctorlisting">
+              <i className="material-icons">arrow_back</i>{" "}
+              {t("appointment.browseDoctors")}
+            </Link>
+          </section>
+        </div>
+      </div>
+    );
+  }
 
   if (doctorsLoading) {
     return (
@@ -566,6 +720,13 @@ export default function Appointment() {
               <strong>{selectedDoctor.name}</strong>
               <span>{selectedDoctor.specialty}</span>
               <small>{selectedDoctor.clinic}</small>
+              {selectedDoctor.feeEnabled && selectedDoctor.feeAmount != null && (
+                <span className="availability-chip">
+                  {t("appointment.bookingFeeLabel", {
+                    fee: formatEtb(selectedDoctor.feeAmount),
+                  })}
+                </span>
+              )}
             </div>
           </div>
 
@@ -893,6 +1054,26 @@ export default function Appointment() {
                   />
                 </div>
               </div>
+
+              {selectedDoctor.feeEnabled && (
+                <div className="field-group">
+                  <label className="field-label" htmlFor="patientEmail">
+                    {t("appointment.email")}
+                  </label>
+                  <div className="input-shell input-with-icon">
+                    <i className="material-icons input-icon">mail</i>
+                    <input
+                      id="patientEmail"
+                      value={patientEmail}
+                      onChange={(event) => setPatientEmail(event.target.value)}
+                      placeholder="you@example.com"
+                      autoComplete="email"
+                      type="email"
+                      required
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           </section>
 
@@ -931,18 +1112,34 @@ export default function Appointment() {
                 <strong>{reasonLabel(reason)}</strong>
                 {reasonNote.trim() && <span>{reasonNote.trim()}</span>}
               </div>
+              {selectedDoctor.feeEnabled && selectedDoctor.feeAmount != null && (
+                <div>
+                  <span className="summary-label">
+                    {t("appointment.bookingFee")}
+                  </span>
+                  <strong>{formatEtb(selectedDoctor.feeAmount)}</strong>
+                </div>
+              )}
             </div>
 
             <div className="desktop-cta">
-              <button className="cta-button" type="submit">
-                {t("appointment.confirmAppointment")}
+              <button className="cta-button" type="submit" disabled={redirecting}>
+                {redirecting
+                  ? t("appointment.redirecting")
+                  : selectedDoctor.feeEnabled
+                    ? t("appointment.payAndConfirm")
+                    : t("appointment.confirmAppointment")}
               </button>
             </div>
           </section>
 
           <div className="mobile-cta" aria-hidden="true">
-            <button className="cta-button" type="submit">
-              {t("appointment.confirmAppointment")}
+            <button className="cta-button" type="submit" disabled={redirecting}>
+              {redirecting
+                ? t("appointment.redirecting")
+                : selectedDoctor.feeEnabled
+                  ? t("appointment.payAndConfirm")
+                  : t("appointment.confirmAppointment")}
             </button>
           </div>
         </form>

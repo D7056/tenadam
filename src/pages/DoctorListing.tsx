@@ -10,6 +10,8 @@ type ApiDoctor = {
   last_name: string;
   specialty: string;
   clinic: string;
+  fee_enabled: boolean;
+  fee_amount: string | null;
 };
 
 type Doctor = {
@@ -18,6 +20,8 @@ type Doctor = {
   specialty: string;
   clinic: string;
   image: string;
+  feeEnabled: boolean;
+  feeAmount: number | null;
 };
 
 export default function DoctorListing() {
@@ -47,6 +51,8 @@ export default function DoctorListing() {
             specialty: doc.specialty,
             clinic: doc.clinic,
             image: AvatarImage,
+            feeEnabled: doc.fee_enabled,
+            feeAmount: doc.fee_amount ? Number(doc.fee_amount) : null,
           })),
         );
       } catch {
@@ -142,6 +148,18 @@ export default function DoctorListing() {
                 </div>
 
                 <div className="card-footer">
+                  {doctor.feeEnabled && doctor.feeAmount != null && (
+                    <div className="availability">
+                      <span className="avail-label">
+                        {t("doctorListing.bookingFee")}
+                      </span>
+                      <span className="avail-time">
+                        {t("common.priceLabel", {
+                          price: doctor.feeAmount.toFixed(2),
+                        })}
+                      </span>
+                    </div>
+                  )}
                   <span className="book-btn">{t("doctorListing.book")}</span>
                 </div>
               </Link>
